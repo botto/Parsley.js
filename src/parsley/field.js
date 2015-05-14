@@ -29,9 +29,8 @@ define('parsley/field', [
   ParsleyField.prototype = {
     // # Public API
     // Validate field and trigger some events for mainly `ParsleyUI`
-    // @returns validationResult:
-    //  - `true` if field valid
-    //  - `[Violation, [Violation...]]` if there were validation errors
+    // @returns a promise that will either succeed (field valid) or fail,
+    // in which case the result is an array of Violation.
     validate: function (force) {
       this.value = this.getValue();
 
@@ -63,10 +62,9 @@ define('parsley/field', [
       return true;
     },
 
-    // Just validate field. Do not trigger any event
-    //  - `false` if there are constraints and at least one of them failed
-    //  - `true` in all other cases
-    isValid: function (force, value) {
+    // Just validate field. Do not trigger any event.
+    // Returns `true`, or a promise that will succeed iff all constraints pass.
+    whenValid: function (force, value) {
       // Recompute options and rebind constraints to have latest changes
       this.refreshConstraints();
       this.validationResult = true;
